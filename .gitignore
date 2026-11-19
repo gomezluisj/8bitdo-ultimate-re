@@ -1,0 +1,26 @@
+# Controller & NV dumps (keep locally on disk, never commit)
+backups/
+
+# Generated / vendor firmware binaries & archives
+*.bin
+*.dat
+*.zip
+*.exe
+
+# Reverse-engineering scratch artifacts & logs
+*.pkl
+*.log
+*.dis
+.cache/
+tmp/
+
+# Compiled bootloader binaries
+boot/boot_macos
+boot/boot_linux
+boot/boot_*.tmp.*
+boot/build/
+
+# Python & OS files
+__pycache__/
+*.py[cod]
+.DS_Store

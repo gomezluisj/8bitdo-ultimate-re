@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-selftest:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check shell script syntax
+        run: bash -n boot/flash-firmware.sh
+
+      - name: Run build_v22 offline selftest (normal & -O)
+        run: |
+          python3 build_v22.py --selftest
+          python3 -O build_v22.py --selftest
+
+      - name: Compile Linux boot tool (-Werror)
+        if: runner.os == 'Linux'
+        run: |
+          gcc -O2 -Wall -Wextra -Werror -o boot/boot_linux boot/boot_linux.c
+          ./boot/boot_linux --help
+
+      - name: Compile macOS boot tool (-Werror)
+        if: runner.os == 'macOS'
+        run: |
+          clang -O2 -Wall -Wextra -Werror -framework IOKit -framework CoreFoundation \
+            -o boot/boot_macos boot/boot_macos.c
+          ./boot/boot_macos --help
